@@ -12,8 +12,8 @@ services:
     networks:
       - backend
 
-  user_service:
-    build: ./packages/user_service
+  users_service:
+    build: ./packages/users_service
     restart: always
     hostname: user
     env_file:

@@ -20,7 +20,7 @@ import { IServiceUserSearchResponse } from './interfaces/user/service-user-searc
 @ApiTags('User')
 export class UserController {
   constructor(
-    @Inject('USER_SERVICE') private readonly userServiceClient: ClientProxy,
+    @Inject('USERS_SERVICE') private readonly userServiceClient: ClientProxy,
     @Inject('AUTH_SERVICE') private readonly authServiceClient: ClientProxy,
   ) {}
 

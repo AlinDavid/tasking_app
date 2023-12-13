@@ -12,7 +12,7 @@ import { IUser } from './interfaces/user/user';
 @Controller()
 export class AuthController {
   constructor(
-    @Inject('USER_SERVICE') private readonly userServiceClient: ClientProxy,
+    @Inject('USERS_SERVICE') private readonly usersServiceClient: ClientProxy,
     private readonly authService: AuthService,
   ) {}
 

@@ -13,7 +13,7 @@ import { JwtService } from '@nestjs/jwt';
     AuthService,
     ConfigService,
     {
-      provide: 'USER_SERVICE',
+      provide: 'USERS_SERVICE',
       useFactory: (configService: ConfigService) => {
         const userServiceOptions = configService.get('userService');
         return ClientProxyFactory.create(userServiceOptions);

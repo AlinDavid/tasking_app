@@ -15,8 +15,8 @@ export class ConfigService {
     };
     this.envConfig.userService = {
       options: {
-        port: process.env.USER_SERVICE_PORT,
-        host: process.env.USER_SERVICE_HOST,
+        port: process.env.USERS_SERVICE_PORT,
+        host: process.env.USERS_SERVICE_HOST,
       },
       transport: Transport.TCP,
     };
