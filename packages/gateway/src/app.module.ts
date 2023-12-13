@@ -24,6 +24,14 @@ import { UserController } from './user.controller';
       },
       inject: [ConfigService],
     },
+    {
+      provide: 'TASKS_SERVICE',
+      useFactory: (configService: ConfigService) => {
+        const tasksServiceOptions = configService.get('tasksService');
+        return ClientProxyFactory.create(tasksServiceOptions);
+      },
+      inject: [ConfigService],
+    },
   ],
 })
 export class AppModule {}

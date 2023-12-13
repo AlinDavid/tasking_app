@@ -34,6 +34,17 @@ services:
     networks:
       - backend
 
+  tasks_service:
+    build: ./packages/tasks_service
+    restart: always
+    hostname: tasks
+    env_file:
+      - .env
+    ports:
+      - "8003:8003"
+    networks:
+      - backend
+
   db:
     image: mongo:latest
     restart: always
