@@ -6,5 +6,5 @@ export interface IUser {
   /**
    * The user's password
    */
-  id: string;
+  id?: string;
 }

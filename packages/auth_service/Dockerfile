@@ -2,6 +2,9 @@ FROM node:lts-alpine
 
 RUN npm i -g @nestjs/cli
 
+# Install Git using apk
+RUN apk update && apk add --no-cache git
+
 # Create and set the working directory in the container
 WORKDIR /usr/src/auth
 

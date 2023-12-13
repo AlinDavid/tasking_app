@@ -11,8 +11,8 @@ import { UserController } from './user.controller';
     {
       provide: 'USERS_SERVICE',
       useFactory: (configService: ConfigService) => {
-        const userServiceOptions = configService.get('userService');
-        return ClientProxyFactory.create(userServiceOptions);
+        const usersServiceOptions = configService.get('usersService');
+        return ClientProxyFactory.create(usersServiceOptions);
       },
       inject: [ConfigService],
     },

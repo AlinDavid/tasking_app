@@ -23,7 +23,7 @@ export class AuthController {
 
       return {
         status: HttpStatus.OK,
-        message: `Token Created with success for ${user.email}`,
+        message: `Token created with success for ${user.email}`,
         accessToken,
         errors: null,
       };

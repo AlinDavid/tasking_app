@@ -15,7 +15,7 @@ services:
   users_service:
     build: ./packages/users_service
     restart: always
-    hostname: user
+    hostname: users
     env_file:
       - .env
     ports:

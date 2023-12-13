@@ -3,7 +3,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './services/auth.service';
 import { ConfigService } from './services/config/config.service';
 import { ClientProxyFactory } from '@nestjs/microservices';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService, JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [],

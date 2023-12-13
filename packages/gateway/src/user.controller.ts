@@ -12,9 +12,10 @@ import { firstValueFrom } from 'rxjs';
 import { CreateUserDto } from './interfaces/user/dto/create-user';
 import { CreateUserResponseDto } from './interfaces/user/dto/create-user-response';
 import { IServiceUserCreateResponse } from './interfaces/user/service-user-create-response';
-import { LoginUserDto } from './interfaces/user/dto/login-user';
-import { LoginUserResponseDto } from './interfaces/user/dto/login-user-response';
+import { LoginUserDto } from './interfaces/auth/dto/login-user';
+import { LoginUserResponseDto } from './interfaces/auth/dto/login-user-response';
 import { IServiceUserSearchResponse } from './interfaces/user/service-user-search-response';
+import { IServiceAuthCreateToken } from './interfaces/auth/service-auth-create-token';
 
 @Controller('user')
 @ApiTags('User')
@@ -58,7 +59,9 @@ export class UserController {
 
   @Post('/login')
   @ApiCreatedResponse({ type: LoginUserResponseDto })
-  public async loginUser(@Body() userRequest: LoginUserDto): Promise<any> {
+  public async loginUser(
+    @Body() userRequest: LoginUserDto,
+  ): Promise<LoginUserResponseDto> {
     const getUserResponse: IServiceUserSearchResponse = await firstValueFrom(
       this.userServiceClient.send('user_search_by_credentials', userRequest),
     );
@@ -74,10 +77,20 @@ export class UserController {
       );
     }
 
-    const createTokenResponse = await firstValueFrom(
+    const createTokenResponse: IServiceAuthCreateToken = await firstValueFrom(
       this.authServiceClient.send('token_create', {
         userId: getUserResponse.user.id,
+        email: userRequest.email,
       }),
     );
+
+    // We assume that the token creation cannot fail from an obvious reason
+    return {
+      message: createTokenResponse.message,
+      data: {
+        accessToken: createTokenResponse.accessToken,
+      },
+      errors: null,
+    };
   }
 }

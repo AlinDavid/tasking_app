@@ -11,7 +11,10 @@ export class AuthService {
 
     const accessToken = this.jwtService.sign(
       { id },
-      { expiresIn: 30 * 24 * 60 * 60 },
+      {
+        secret: 'bitdefender secret key',
+        expiresIn: 30 * 24 * 60 * 60,
+      },
     );
 
     return accessToken;

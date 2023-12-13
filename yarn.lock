@@ -1291,13 +1291,6 @@
     "@tufjs/canonical-json" "1.0.0"
     minimatch "^9.0.0"
 
-"@types/@nestjs/jwt":
-  version "10.2.0"
-  resolved "https://codeload.github.com/nestjs/jwt/tar.gz/848d92648b0e53d77832a7f1847abbc6560fd8ce"
-  dependencies:
-    "@types/jsonwebtoken" "9.0.5"
-    jsonwebtoken "9.0.2"
-
 "@types/babel__core@^7.1.14":
   version "7.20.5"
   resolved "https://registry.yarnpkg.com/@types/babel__core/-/babel__core-7.20.5.tgz#3df15f27ba85319caa07ba08d0721889bb39c017"
