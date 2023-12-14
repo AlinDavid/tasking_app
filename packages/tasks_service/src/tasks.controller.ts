@@ -11,6 +11,7 @@ import { ITask } from './interfaces/task';
 import { ITaskCreateResponse } from './interfaces/create-task-response';
 import { ITaskSearchByUserIdResponse } from './interfaces/get-tasks-by-user-id-response';
 import { IDeleteTaskResponse } from './interfaces/delete-task-response';
+import { IUpdateTaskResponse } from './interfaces/update-task-response';
 
 @Controller('task')
 export class TaskController {
@@ -70,8 +71,6 @@ export class TaskController {
     taskId: string;
     userId: string;
   }): Promise<IDeleteTaskResponse> {
-    console.log('tasks', taskId, userId);
-
     try {
       const existentTask = await this.tasksService.getTaskById(taskId);
 
@@ -107,6 +106,54 @@ export class TaskController {
         message: 'Not allowed to delete this task',
         data: null,
         errors: new ForbiddenException(),
+      };
+    }
+  }
+
+  @MessagePattern('update_task_by_id')
+  public async updateTask(
+    taskBody: ITask & { userId: string; taskId: string },
+  ): Promise<IUpdateTaskResponse> {
+    try {
+      const existentTask = await this.tasksService.getTaskById(taskBody.taskId);
+
+      if (!existentTask) {
+        return {
+          status: HttpStatus.NOT_FOUND,
+          message: `Couldn't find any task with id ${taskBody.taskId}`,
+          task: null,
+          errors: new NotFoundException(),
+        };
+      }
+
+      if (existentTask.createdBy === taskBody.userId) {
+        const { taskId, userId, ...updatedTaskPayload } = taskBody;
+
+        const updatedTask = await this.tasksService.updateTaskById(
+          taskId,
+          updatedTaskPayload,
+        );
+
+        return {
+          status: HttpStatus.OK,
+          message: 'Updated task succesfully',
+          task: updatedTask,
+          errors: null,
+        };
+      } else {
+        return {
+          status: HttpStatus.FORBIDDEN,
+          message: 'Not allowed to update this task',
+          task: null,
+          errors: new ForbiddenException(),
+        };
+      }
+    } catch (error) {
+      return {
+        status: HttpStatus.BAD_REQUEST,
+        message: error.message,
+        task: null,
+        errors: new BadRequestException(),
       };
     }
   }

@@ -28,4 +28,11 @@ export class TaskService {
   public async deleteTaskById(id: string): Promise<void> {
     return this.taskModel.findOneAndDelete({ _id: id });
   }
+
+  public async updateTaskById(
+    id: string,
+    taskBody: Partial<ITask>,
+  ): Promise<ITask> {
+    return this.taskModel.findOneAndUpdate({ _id: id }, taskBody);
+  }
 }

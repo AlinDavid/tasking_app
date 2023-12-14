@@ -9,6 +9,7 @@ import {
   Inject,
   Param,
   Post,
+  Put,
   Req,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
@@ -21,9 +22,12 @@ import { firstValueFrom } from 'rxjs';
 import { CreateTaskResponseDto } from './interfaces/tasks/dto/create-task-response';
 import { CreateTaskDto } from './interfaces/tasks/dto/create-task-payload';
 import { IServiceTaskCreateResponse } from './interfaces/tasks/service-tasks-create-response';
-import { TaskIdDto } from './interfaces/tasks/dto/task-id-dto';
-import { DeleteTaskDto } from './interfaces/tasks/dto/delete-task-dto';
+import { TaskIdDto } from './interfaces/tasks/dto/task-id';
+import { DeleteTaskDto } from './interfaces/tasks/dto/delete-task';
 import { IServiceTaskDeleteResponse } from './interfaces/tasks/service-tasks-delete-response';
+import { UpdateTaskResposeDto } from './interfaces/tasks/dto/update-task-response';
+import { UpdateTaskDto } from './interfaces/tasks/dto/update-task';
+import { IServiceTaskUpdateByIdResponse } from './interfaces/tasks/service-tasks-update-by-id-response';
 
 @Controller('tasks')
 @ApiTags('tasks')
@@ -136,6 +140,47 @@ export class TasksController {
     return {
       message: deleteTaskResponse.message,
       data: null,
+      errors: null,
+    };
+  }
+
+  @Put(':id')
+  @Authorization(true)
+  @ApiOkResponse({ type: UpdateTaskResposeDto })
+  public async updateTask(
+    @Req() request: IAuthorizedRequest,
+    @Param() params: TaskIdDto,
+    @Body() taskRequest: UpdateTaskDto,
+  ): Promise<UpdateTaskResposeDto> {
+    const userInfo = request.user;
+
+    const updateTaskResponse: IServiceTaskUpdateByIdResponse =
+      await firstValueFrom(
+        this.tasksService.send(
+          'update_task_by_id',
+          Object.assign(taskRequest, {
+            userId: userInfo.id,
+            taskId: params.id,
+          }),
+        ),
+      );
+
+    if (updateTaskResponse.status !== HttpStatus.OK) {
+      throw new HttpException(
+        {
+          message: updateTaskResponse.message,
+          data: null,
+          errors: updateTaskResponse.errors,
+        },
+        updateTaskResponse.status,
+      );
+    }
+
+    return {
+      message: updateTaskResponse.message,
+      data: {
+        task: updateTaskResponse.task,
+      },
       errors: null,
     };
   }
