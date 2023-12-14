@@ -33,6 +33,8 @@ export class TaskService {
     id: string,
     taskBody: Partial<ITask>,
   ): Promise<ITask> {
-    return this.taskModel.findOneAndUpdate({ _id: id }, taskBody);
+    return this.taskModel.findOneAndUpdate({ _id: id }, taskBody, {
+      new: true,
+    });
   }
 }

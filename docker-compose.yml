@@ -45,6 +45,17 @@ services:
     networks:
       - backend
 
+  tasking_frontend:
+    build: ./packages/tasking_frontend
+    restart: always
+    hostname: tasks
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    networks:
+      - frontend
+
   db:
     image: mongo:latest
     restart: always
