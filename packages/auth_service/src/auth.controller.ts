@@ -3,11 +3,14 @@ import {
   Controller,
   HttpStatus,
   Inject,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { ClientProxy } from '@nestjs/microservices';
 import { AuthService } from './services/auth.service';
 import { IUser } from './interfaces/user/user';
+import { ITokenResponse } from './interfaces/token/token-response';
+import { ITokenDataResponse } from './interfaces/token/token-data-response';
 
 @Controller()
 export class AuthController {
@@ -17,7 +20,7 @@ export class AuthController {
   ) {}
 
   @MessagePattern('token_create')
-  public async createToken(user: IUser) {
+  public async createToken(user: IUser): Promise<ITokenResponse> {
     try {
       const accessToken = await this.authService.createToken(user);
 
@@ -35,5 +38,26 @@ export class AuthController {
         errors: new BadRequestException(),
       };
     }
+  }
+
+  @MessagePattern('token_decode')
+  public async decodeToken(accessToken: string): Promise<ITokenDataResponse> {
+    const tokenData = await this.authService.decodeToken(accessToken);
+
+    if (!tokenData) {
+      return {
+        status: HttpStatus.UNAUTHORIZED,
+        message: 'Invalid Token',
+        data: null,
+        errors: new UnauthorizedException(),
+      };
+    }
+
+    return {
+      status: HttpStatus.OK,
+      message: 'Token decoded with success',
+      data: { id: tokenData.id },
+      errors: null,
+    };
   }
 }

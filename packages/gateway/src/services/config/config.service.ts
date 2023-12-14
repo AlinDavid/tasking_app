@@ -21,8 +21,8 @@ export class ConfigService {
     };
     this.envConfig.tasksService = {
       options: {
-        port: process.env.TASK_SERVICE_PORT,
-        host: process.env.TASK_SERVICE_HOST,
+        port: process.env.TASKS_SERVICE_PORT,
+        host: process.env.TASKS_SERVICE_HOST,
       },
       transport: Transport.TCP,
     };

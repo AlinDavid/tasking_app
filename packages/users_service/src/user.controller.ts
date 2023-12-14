@@ -87,4 +87,25 @@ export class UserController {
       errors: new NotFoundException(),
     };
   }
+
+  @MessagePattern('user_get_by_id')
+  public async getUserById(id: string): Promise<IUserSearchResponse> {
+    try {
+      const user = await this.userService.getUserById(id);
+
+      return {
+        status: HttpStatus.OK,
+        message: 'User found with success',
+        user: user,
+        errors: null,
+      };
+    } catch (error) {
+      return {
+        status: HttpStatus.NOT_FOUND,
+        message: 'User not found',
+        user: null,
+        errors: new NotFoundException(),
+      };
+    }
+  }
 }

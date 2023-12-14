@@ -79,7 +79,7 @@ export class UserController {
 
     const createTokenResponse: IServiceAuthCreateToken = await firstValueFrom(
       this.authServiceClient.send('token_create', {
-        userId: getUserResponse.user.id,
+        id: getUserResponse.user.id,
         email: userRequest.email,
       }),
     );
