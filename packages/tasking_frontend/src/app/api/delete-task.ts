@@ -16,7 +16,7 @@ export const deleteTask = async (id: string, accessToken: string) => {
       return { success: false, data: null };
     }
   } catch (error) {
-    console.error("Error while retrieving tasks:", error);
+    console.error("Error while deleting task:", error);
     return { success: false };
   }
 };

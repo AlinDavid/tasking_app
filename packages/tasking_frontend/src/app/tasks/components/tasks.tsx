@@ -77,7 +77,6 @@ const Tasks: FC<TasksProps> = ({ router }) => {
   };
 
   const closeEditModal = () => {
-    // setSelectedTask(null);
     setIsEditModalOpen(false);
   };
 
