@@ -28,6 +28,8 @@ import { IServiceTaskDeleteResponse } from './interfaces/tasks/service-tasks-del
 import { UpdateTaskResposeDto } from './interfaces/tasks/dto/update-task-response';
 import { UpdateTaskDto } from './interfaces/tasks/dto/update-task';
 import { IServiceTaskUpdateByIdResponse } from './interfaces/tasks/service-tasks-update-by-id-response';
+import { GetTaskResponseDto } from './interfaces/tasks/dto/get-task-response';
+import { IServiceTaskGetByIdResponse } from './interfaces/tasks/service-tasks-get-by-id-response';
 
 @Controller('tasks')
 @ApiTags('tasks')
@@ -67,6 +69,45 @@ export class TasksController {
       message: tasksResponse.message,
       data: {
         tasks: tasksResponse.tasks,
+      },
+      errors: null,
+    };
+  }
+
+  @Get(':id')
+  @Authorization(true)
+  @ApiOkResponse({
+    type: GetTaskResponseDto,
+    description: 'Gets a single task',
+  })
+  public async getTask(
+    @Req() request: IAuthorizedRequest,
+    @Param() params: TaskIdDto,
+  ): Promise<GetTaskResponseDto> {
+    const userInfo = request.user;
+
+    const taskResponse: IServiceTaskGetByIdResponse = await firstValueFrom(
+      this.tasksService.send('task_search_by_task_id', {
+        taskId: params.id,
+        userId: userInfo.id,
+      }),
+    );
+
+    if (taskResponse.status !== HttpStatus.OK) {
+      throw new HttpException(
+        {
+          message: taskResponse.message,
+          task: null,
+          errors: taskResponse.errors,
+        },
+        taskResponse.status,
+      );
+    }
+
+    return {
+      message: taskResponse.message,
+      data: {
+        task: taskResponse.task,
       },
       errors: null,
     };
@@ -117,7 +158,6 @@ export class TasksController {
     @Param() params: TaskIdDto,
   ): Promise<DeleteTaskDto> {
     const userInfo = request.user;
-    console.log(params);
 
     const deleteTaskResponse: IServiceTaskDeleteResponse = await firstValueFrom(
       this.tasksService.send('task_delete_by_id', {

@@ -12,6 +12,7 @@ import { ITaskCreateResponse } from './interfaces/create-task-response';
 import { ITaskSearchByUserIdResponse } from './interfaces/get-tasks-by-user-id-response';
 import { IDeleteTaskResponse } from './interfaces/delete-task-response';
 import { IUpdateTaskResponse } from './interfaces/update-task-response';
+import { ITaskGetByTaskId } from './interfaces/get-task-by-task-id-response';
 
 @Controller('task')
 export class TaskController {
@@ -59,6 +60,51 @@ export class TaskController {
         message: `Error while retrieving tasks for ${id}`,
         tasks: null,
         errors: new BadRequestException(),
+      };
+    }
+  }
+
+  @MessagePattern('task_search_by_task_id')
+  public async getTaskByTaskId({
+    taskId,
+    userId,
+  }: {
+    taskId: string;
+    userId: string;
+  }): Promise<ITaskGetByTaskId> {
+    try {
+      const existentTask = await this.tasksService.getTaskById(taskId);
+
+      if (!existentTask) {
+        return {
+          status: HttpStatus.NOT_FOUND,
+          message: `Task not found with id ${taskId}`,
+          task: null,
+          errors: new NotFoundException(),
+        };
+      }
+
+      if (existentTask.createdBy === userId) {
+        return {
+          status: HttpStatus.OK,
+          message: `Succesfully retrieved task ${taskId}`,
+          task: existentTask,
+          errors: null,
+        };
+      } else {
+        return {
+          status: HttpStatus.FORBIDDEN,
+          message: 'Not allowed to get this task',
+          task: null,
+          errors: new ForbiddenException(),
+        };
+      }
+    } catch (error) {
+      return {
+        status: HttpStatus.FORBIDDEN,
+        message: 'Not allowed to get this task',
+        task: null,
+        errors: new ForbiddenException(),
       };
     }
   }

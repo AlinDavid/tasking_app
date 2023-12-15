@@ -4,6 +4,7 @@ import {
   HttpException,
   HttpStatus,
   Inject,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ClientProxy } from '@nestjs/microservices';
@@ -44,6 +45,16 @@ export class AuthGuard implements CanActivate {
       this.usersService.send('user_get_by_id', userTokenInfo.data.id),
     );
 
+    if (!userInfo.user) {
+      throw new HttpException(
+        {
+          message: 'Invalid token',
+          data: null,
+          errors: new UnauthorizedException(),
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
     request.user = userInfo.user;
     return true;
   }
